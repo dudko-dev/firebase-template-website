@@ -32,6 +32,11 @@ mkdir $FIREBASE_WEBAPI_DIR
 git clone $FIREBASE_WEBAPI_REPO $FIREBASE_WEBAPI_DIR
 ```
 
+Before using:
+
+- setup authorized domains in <https://console.firebase.google.com/u/0/project/YOUR_PROJECT_ID/authentication/settings>
+- customize url action like to `https://YOUR_HOSTNAME/auth/action` in <https://console.firebase.google.com/u/0/project/YOUR_PROJECT_ID/authentication/emails> (see `.env` files for more info)
+
 ## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
