@@ -32,7 +32,7 @@ mkdir $FIREBASE_WEBAPI_DIR
 git clone $FIREBASE_WEBAPI_REPO $FIREBASE_WEBAPI_DIR
 ```
 
-Before using:
+## Before using
 
 - setup authorized domains in <https://console.firebase.google.com/u/0/project/YOUR_PROJECT_ID/authentication/settings>
 - customize url action like to `https://YOUR_HOSTNAME/auth/action` in <https://console.firebase.google.com/u/0/project/YOUR_PROJECT_ID/authentication/emails> (see `.env` files for more info)
