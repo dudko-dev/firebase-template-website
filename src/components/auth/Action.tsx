@@ -34,7 +34,7 @@ export default function Action() {
     : "resetEmail";
   const oobCode = searchParams.get("oobCode");
   const navigate = useNavigate();
-  const { REACT_APP_404, REACT_APP_AUTH_SIGNUP } = process.env;
+  const { REACT_APP_404, REACT_APP_AUTH_SIGNIN } = process.env;
 
   const handleResetPassword = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -108,7 +108,7 @@ export default function Action() {
       .then(() => signOut(FirebaseAuth))
       .then(() => {
         setErrorMessage("");
-        navigate(REACT_APP_AUTH_SIGNUP || REACT_APP_404 || "/");
+        navigate(REACT_APP_AUTH_SIGNIN || REACT_APP_404 || "/");
       })
       .catch((err: FirebaseError) => {
         if (errorMessagesMap[err.code]) {
