@@ -1,0 +1,2 @@
+Sitemap: https://fir-template-website.web.app/sitemap.xml
+User-agent: *
