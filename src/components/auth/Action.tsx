@@ -26,7 +26,7 @@ export default function Action() {
       isShown: boolean;
     }
   );
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const mode: (typeof modes)[number] = modes.includes(
     searchParams.get("mode") as any
   )

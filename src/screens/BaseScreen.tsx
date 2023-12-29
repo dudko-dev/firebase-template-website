@@ -12,7 +12,7 @@ import SignUp from "../components/auth/SignUp";
 import Recovery from "../components/auth/Action";
 
 export default function BaseScreen() {
-  const [user, loading] = useAuthState(FirebaseAuth);
+  const [, loading] = useAuthState(FirebaseAuth);
   const {
     REACT_APP_AUTH_SIGNIN,
     REACT_APP_AUTH_SIGNUP,
