@@ -36,6 +36,7 @@ git clone $FIREBASE_WEBAPI_REPO $FIREBASE_WEBAPI_DIR
 
 - setup authorized domains in <https://console.firebase.google.com/u/0/project/YOUR_PROJECT_ID/authentication/settings>
 - customize url action like to `https://YOUR_HOSTNAME/auth/action` in <https://console.firebase.google.com/u/0/project/YOUR_PROJECT_ID/authentication/emails> (see `.env` files for more info)
+- add your own project settings to `.env.*` files
 
 ## Getting Started with Create React App
 
