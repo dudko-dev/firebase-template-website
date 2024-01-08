@@ -10,9 +10,15 @@ import "./BaseScreen.css";
 import BottomBar from "../components/BottomBar";
 import SignUp from "../components/auth/SignUp";
 import Recovery from "../components/auth/Action";
+import { useDocumentData } from "react-firebase-hooks/firestore";
+import { doc } from "firebase/firestore";
+import { UserModel } from "../models/database/User";
 
 export default function BaseScreen() {
-  const [, loading] = useAuthState(FirebaseAuth);
+  const [authUser, isLoadingAuthUser] = useAuthState(FirebaseAuth);
+  const userRef = doc(UserModel.parent, `${FirebaseAuth.currentUser?.uid}`);
+  const [user, isLoadingUser] = useDocumentData(userRef);
+
   const {
     REACT_APP_AUTH_SIGNIN,
     REACT_APP_AUTH_SIGNUP,
@@ -22,19 +28,33 @@ export default function BaseScreen() {
   return (
     <div className="App">
       <TopBar />
-      {loading ? (
+      {isLoadingAuthUser ? (
         <Loader />
       ) : (
         <Routes>
           <Route path="/" element={<Outlet />} key="page_main">
             {menuItems.map((e, i) => {
               if (i === 0) {
-                return <Route index element={e.component()} key={e.key} />;
+                return (
+                  <Route
+                    index
+                    element={e.component({
+                      authUser,
+                      user,
+                      isLoadingUser,
+                    })}
+                    key={e.key}
+                  />
+                );
               }
               return (
                 <Route
                   path={e.path.substring(1)}
-                  element={e.component()}
+                  element={e.component({
+                    authUser,
+                    user,
+                    isLoadingUser,
+                  })}
                   key={e.key}
                 />
               );

@@ -17,25 +17,51 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
 import "./TopBar.css";
+import { UserModel } from "../models/database/User";
+import { User } from "firebase/auth";
 
 const menuItems: {
   key: string;
   path: string;
-  component: () => JSX.Element;
+  component: ({
+    authUser,
+    user,
+    isLoadingUser,
+  }: {
+    authUser: User | null | undefined;
+    user: UserModel | undefined;
+    isLoadingUser: boolean;
+  }) => JSX.Element;
   label: string;
   secure: boolean;
 }[] = [
   {
     key: "page_main",
     path: "/",
-    component: () => <MainRoute />,
+    component: ({ authUser }: { authUser: User | null | undefined }) => (
+      <MainRoute authUser={authUser} />
+    ),
     label: "Main Page",
     secure: false,
   },
   {
     key: "page_second",
     path: "/second",
-    component: () => <SecondRoute />,
+    component: ({
+      authUser,
+      user,
+      isLoadingUser,
+    }: {
+      authUser: User | null | undefined;
+      user: UserModel | undefined;
+      isLoadingUser: boolean;
+    }) => (
+      <SecondRoute
+        authUser={authUser}
+        user={user}
+        isLoadingUser={isLoadingUser}
+      />
+    ),
     label: "Second Page",
     secure: true,
   },

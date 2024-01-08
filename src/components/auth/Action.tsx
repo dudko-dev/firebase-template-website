@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useCallback, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -32,7 +32,7 @@ export default function Action() {
   )
     ? (searchParams.get("mode") as (typeof modes)[number])
     : "resetEmail";
-  const oobCode = searchParams.get("oobCode");
+  let oobCode = searchParams.get("oobCode");
   const navigate = useNavigate();
   const { REACT_APP_404, REACT_APP_AUTH_SIGNIN } = process.env;
 
@@ -97,46 +97,54 @@ export default function Action() {
       });
   };
 
-  const handleVerifyEmail = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    localStorage.removeItem("authorized");
+  const handleVerifyEmail = useCallback(async () => {
+    if (mode !== "verifyEmail") return;
     if (!oobCode) {
-      setErrorMessage("You must follow the link from the email..");
+      setShowMsg({
+        type: "error",
+        message: "You must follow the link from the email.",
+        isShown: true,
+      });
       return;
     }
-    applyActionCode(FirebaseAuth, oobCode)
-      .then(() => signOut(FirebaseAuth))
+    await applyActionCode(FirebaseAuth, oobCode)
       .then(() => {
-        setErrorMessage("");
-        navigate(REACT_APP_AUTH_SIGNIN || REACT_APP_404 || "/");
+        setShowMsg({
+          type: "info",
+          message: "The address has been confirmed, you need to log in again.",
+          isShown: true,
+        });
+        setTimeout(() => {
+          navigate("/");
+          window.location.reload();
+        }, 500);
       })
       .catch((err: FirebaseError) => {
         if (errorMessagesMap[err.code]) {
-          setErrorMessage(errorMessagesMap[err.code]);
+          setShowMsg({
+            type: "error",
+            message: errorMessagesMap[err.code],
+            isShown: true,
+          });
         } else {
-          setErrorMessage("Unknown error");
+          setShowMsg({
+            type: "error",
+            message: "Unknown error",
+            isShown: true,
+          });
         }
       });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, oobCode]);
 
-  const inputBox = (): JSX.Element => {
+  useEffect(() => {
+    handleVerifyEmail();
+  }, [handleVerifyEmail]);
+
+  const inputBox = (): JSX.Element | null => {
     switch (mode) {
       case "verifyEmail":
-        return (
-          <Box
-            component="form"
-            onSubmit={handleVerifyEmail}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            {errorMessage ? (
-              <Alert severity="error">{errorMessage}</Alert>
-            ) : null}
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
-              Verify
-            </Button>
-          </Box>
-        );
+        return null;
       case "resetPassword":
         return (
           <Box

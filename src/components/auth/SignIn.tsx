@@ -49,6 +49,7 @@ export default function SignIn() {
       })
       .catch((err: FirebaseError) => {
         switch (err.code) {
+          case "auth/invalid-login-credentials":
           case "auth/user-not-found":
           case "auth/wrong-password":
             setErrorMessage("Invalid username or password");
