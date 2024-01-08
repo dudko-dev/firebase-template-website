@@ -7,7 +7,6 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   applyActionCode,
-  signOut,
 } from "firebase/auth";
 import FirebaseAuth, { errorMessagesMap } from "../../services/FirebaseAuth";
 import { Alert, Snackbar } from "@mui/material";
@@ -34,7 +33,6 @@ export default function Action() {
     : "resetEmail";
   let oobCode = searchParams.get("oobCode");
   const navigate = useNavigate();
-  const { REACT_APP_404, REACT_APP_AUTH_SIGNIN } = process.env;
 
   const handleResetPassword = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
