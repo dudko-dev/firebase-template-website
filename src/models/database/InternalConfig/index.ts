@@ -32,7 +32,7 @@ export class InternalConfigModel {
 
   static fromJson(json: { [key: string]: any }): InternalConfigModel {
     return new InternalConfigModel({
-      maintenanceMode: typeof json?.requests === 'boolean' ? json.maintenanceMode : false,
+      maintenanceMode: typeof json?.maintenanceMode === 'boolean' ? json.maintenanceMode : false,
       maintenanceMessage: typeof json?.maintenanceMessage === 'string' ? json.maintenanceMessage : '',
     });
   }
