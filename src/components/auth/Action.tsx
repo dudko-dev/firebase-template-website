@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   applyActionCode,
+  getIdToken,
 } from "firebase/auth";
 import FirebaseAuth, { errorMessagesMap } from "../../services/FirebaseAuth";
 import { Alert, Snackbar } from "@mui/material";
@@ -116,12 +117,14 @@ export default function Action() {
     }
     setActionIsRunning(true);
     await applyActionCode(FirebaseAuth, oobCode)
-      .then(() => {
+      .then(async () => {
         setShowMsg({
           type: "info",
           message: "The address has been confirmed, you need to log in again.",
           isShown: true,
         });
+        if (FirebaseAuth.currentUser)
+          await getIdToken(FirebaseAuth.currentUser, true);
         setTimeout(() => {
           navigate("/");
           window.location.reload();
