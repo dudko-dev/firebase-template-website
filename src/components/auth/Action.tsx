@@ -18,6 +18,7 @@ const modes = ["resetEmail", "resetPassword", "verifyEmail"] as const;
 
 export default function Action() {
   const [errorMessage, setErrorMessage] = useState("");
+  const [actionIsRunning, setActionIsRunning] = useState(false);
   const [showMsg, setShowMsg] = useState(
     {} as {
       type: "success" | "warning" | "info" | "error";
@@ -43,6 +44,7 @@ export default function Action() {
       setErrorMessage("You did not specify an email address.");
       return;
     }
+    setActionIsRunning(true);
     sendPasswordResetEmail(FirebaseAuth, email, {
       url: `${window.location.origin}`,
     })
@@ -56,6 +58,9 @@ export default function Action() {
         } else {
           setErrorMessage("Unknown error");
         }
+      })
+      .finally(() => {
+        setActionIsRunning(false);
       });
   };
 
@@ -81,6 +86,7 @@ export default function Action() {
       setErrorMessage("The passwords don't match.");
       return;
     }
+    setActionIsRunning(true);
     confirmPasswordReset(FirebaseAuth, oobCode, password)
       .then(() => {
         setErrorMessage("");
@@ -92,6 +98,9 @@ export default function Action() {
         } else {
           setErrorMessage("Unknown error");
         }
+      })
+      .finally(() => {
+        setActionIsRunning(false);
       });
   };
 
@@ -105,6 +114,7 @@ export default function Action() {
       });
       return;
     }
+    setActionIsRunning(true);
     await applyActionCode(FirebaseAuth, oobCode)
       .then(() => {
         setShowMsg({
@@ -131,6 +141,9 @@ export default function Action() {
             isShown: true,
           });
         }
+      })
+      .finally(() => {
+        setActionIsRunning(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, oobCode]);
@@ -172,7 +185,13 @@ export default function Action() {
             {errorMessage ? (
               <Alert severity="error">{errorMessage}</Alert>
             ) : null}
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3 }}
+              disabled={actionIsRunning}
+            >
               Confirm
             </Button>
           </Box>
@@ -199,7 +218,13 @@ export default function Action() {
             {errorMessage ? (
               <Alert severity="error">{errorMessage}</Alert>
             ) : null}
-            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3 }}
+              disabled={actionIsRunning}
+            >
               Restore
             </Button>
           </Box>

@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import FirebaseAuth from "../../services/FirebaseAuth";
 import "./SignInWithButton.css";
+import { useState } from "react";
 
 export enum SignInProviders {
   apple = "apple",
@@ -27,6 +28,8 @@ function SignInWithButton(
     errorHandler: (err: any) => {},
   }
 ) {
+  const [signInIsRunning, setSignInIsRunning] = useState(false);
+
   const signInFun = async (): Promise<void> => {
     let provider: AuthProvider;
     switch (props.provider) {
@@ -44,9 +47,14 @@ function SignInWithButton(
       default:
         throw new TypeError("Invalid Sign In Provider");
     }
-    await signInWithPopup(FirebaseAuth, provider).catch((err) => {
-      if (typeof props.errorHandler === "function") props.errorHandler(err);
-    });
+    setSignInIsRunning(true);
+    await signInWithPopup(FirebaseAuth, provider)
+      .catch((err) => {
+        if (typeof props.errorHandler === "function") props.errorHandler(err);
+      })
+      .finally(() => {
+        setSignInIsRunning(false);
+      });
   };
 
   const getSymbol = (): string => {
@@ -69,6 +77,7 @@ function SignInWithButton(
       sx={{ mt: 3, mb: 2 }}
       style={{ fontFamily: "FontAwersome" }}
       onClick={signInFun}
+      disabled={signInIsRunning}
     >
       {getSymbol()}
     </Button>

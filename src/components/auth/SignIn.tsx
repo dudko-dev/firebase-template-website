@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
   const [errorMessage, setErrorMessage] = useState("");
+  const [signInIsRunning, setSignInIsRunning] = useState(false);
   const [showMsg, setShowMsg] = useState(
     {} as {
       type: "success" | "warning" | "info" | "error";
@@ -42,6 +43,7 @@ export default function SignIn() {
       setErrorMessage("You did not specify a password.");
       return;
     }
+    setSignInIsRunning(true);
     signInWithEmailAndPassword(FirebaseAuth, email, password)
       .then(() => {
         setErrorMessage("");
@@ -62,6 +64,9 @@ export default function SignIn() {
             }
             break;
         }
+      })
+      .finally(() => {
+        setSignInIsRunning(false);
       });
   };
 
@@ -97,7 +102,13 @@ export default function SignIn() {
             autoComplete="current-password"
           />
           {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3 }}
+            disabled={signInIsRunning}
+          >
             Sign In
           </Button>
           <Grid container textAlign={"center"}>

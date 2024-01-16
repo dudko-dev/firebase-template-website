@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
+  const [signUpIsRunning, setSignUpIsRunning] = useState(false);
   const [showMsg, setShowMsg] = useState(
     {} as {
       type: "success" | "warning" | "info" | "error";
@@ -54,6 +55,7 @@ export default function SignUp() {
       setErrorMessage("The passwords don't match.");
       return;
     }
+    setSignUpIsRunning(true);
     createUserWithEmailAndPassword(FirebaseAuth, email, password)
       .then((user) =>
         sendEmailVerification(user.user, {
@@ -70,6 +72,9 @@ export default function SignUp() {
         } else {
           setErrorMessage("Unknown error");
         }
+      })
+      .finally(() => {
+        setSignUpIsRunning(false);
       });
   };
 
@@ -113,7 +118,13 @@ export default function SignUp() {
             id="repeat_password"
           />
           {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
-          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3 }}
+            disabled={signUpIsRunning}
+          >
             Sign Up
           </Button>
           <Grid container textAlign={"center"}>
