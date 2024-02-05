@@ -1,6 +1,6 @@
-import { ConverterError } from './ConverterError';
-import { UserModel } from './User';
-import { Currency } from './Currency';
+import { ConverterError } from "./ConverterError";
+import { UserModel } from "./User";
+import { Currency } from "./Currency";
 
 /* eslint-disable-next-line */
 const _internal = {

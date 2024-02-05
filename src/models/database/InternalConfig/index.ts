@@ -7,13 +7,13 @@ import {
   doc,
   getDoc,
   setDoc,
-} from 'firebase/firestore';
-import FirebaseFirestore from '../../../services/FirebaseFirestore';
+} from "firebase/firestore";
+import FirebaseFirestore from "../../../services/FirebaseFirestore";
 
 export class InternalConfigModel {
   constructor({
     maintenanceMode,
-    maintenanceMessage = '',
+    maintenanceMessage = "",
   }: {
     maintenanceMode: boolean;
     maintenanceMessage: string;
@@ -22,9 +22,9 @@ export class InternalConfigModel {
     this.maintenanceMessage = maintenanceMessage;
   }
 
-  static id = 'config'
+  static id = "config";
 
-  id = InternalConfigModel.id
+  id = InternalConfigModel.id;
 
   maintenanceMode: boolean;
 
@@ -32,8 +32,14 @@ export class InternalConfigModel {
 
   static fromJson(json: { [key: string]: any }): InternalConfigModel {
     return new InternalConfigModel({
-      maintenanceMode: typeof json?.maintenanceMode === 'boolean' ? json.maintenanceMode : false,
-      maintenanceMessage: typeof json?.maintenanceMessage === 'string' ? json.maintenanceMessage : '',
+      maintenanceMode:
+        typeof json?.maintenanceMode === "boolean"
+          ? json.maintenanceMode
+          : false,
+      maintenanceMessage:
+        typeof json?.maintenanceMessage === "string"
+          ? json.maintenanceMessage
+          : "",
     });
   }
 
@@ -44,7 +50,10 @@ export class InternalConfigModel {
     };
   }
 
-  static parent = collection(FirebaseFirestore, '_internal_').withConverter<InternalConfigModel>({
+  static parent = collection(
+    FirebaseFirestore,
+    "_internal_"
+  ).withConverter<InternalConfigModel>({
     toFirestore: (doc: InternalConfigModel) => doc.toJson(),
     fromFirestore: (snapshot: QueryDocumentSnapshot) =>
       InternalConfigModel.fromJson(snapshot.data()),
@@ -56,7 +65,9 @@ export class InternalConfigModel {
     return doc(InternalConfigModel.parent, this.id);
   };
 
-  load = (transaction?: Transaction): Promise<DocumentSnapshot<InternalConfigModel>> =>
+  load = (
+    transaction?: Transaction
+  ): Promise<DocumentSnapshot<InternalConfigModel>> =>
     transaction instanceof Transaction
       ? transaction.get(this.ref())
       : getDoc(this.ref());

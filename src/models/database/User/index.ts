@@ -6,14 +6,14 @@ import {
   collection,
   doc,
   getDoc,
-} from 'firebase/firestore';
-import FirebaseFirestore from '../../../services/FirebaseFirestore';
+} from "firebase/firestore";
+import FirebaseFirestore from "../../../services/FirebaseFirestore";
 
 export class UserModel {
   constructor({
     id,
     email,
-    fcmToken = '',
+    fcmToken = "",
   }: {
     id?: string;
     email: string;
@@ -33,8 +33,8 @@ export class UserModel {
   static fromJson(id: string, json: { [key: string]: any }): UserModel {
     return new UserModel({
       id: id,
-      email: typeof json?.email === 'string' ? json.email : '',
-      fcmToken: typeof json?.fcmToken === 'string' ? json.fcmToken : '',
+      email: typeof json?.email === "string" ? json.email : "",
+      fcmToken: typeof json?.fcmToken === "string" ? json.fcmToken : "",
     });
   }
 
@@ -45,7 +45,10 @@ export class UserModel {
     };
   }
 
-  static parent = collection(FirebaseFirestore, 'users').withConverter<UserModel>({
+  static parent = collection(
+    FirebaseFirestore,
+    "users"
+  ).withConverter<UserModel>({
     toFirestore: (doc: UserModel) => doc.toJson(),
     fromFirestore: (snapshot: QueryDocumentSnapshot) =>
       UserModel.fromJson(snapshot.id, snapshot.data()),
@@ -55,8 +58,7 @@ export class UserModel {
     getDoc(doc(UserModel.parent, id));
 
   ref = (): DocumentReference<UserModel> => {
-    if (typeof this.id === 'string')
-      return doc(UserModel.parent, this.id);
+    if (typeof this.id === "string") return doc(UserModel.parent, this.id);
     const docRef = doc(UserModel.parent);
     this.id = docRef.id;
     return docRef;

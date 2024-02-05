@@ -1,15 +1,16 @@
 import { Button } from "@mui/material";
 import {
   AuthProvider,
-  // FacebookAuthProvider,
   GithubAuthProvider,
   GoogleAuthProvider,
   OAuthProvider,
+  sendEmailVerification,
   signInWithPopup,
 } from "firebase/auth";
 import FirebaseAuth from "../../services/FirebaseAuth";
 import "./SignInWithButton.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export enum SignInProviders {
   apple = "apple",
@@ -17,18 +18,20 @@ export enum SignInProviders {
   github = "github",
 }
 
-export const enabledProviders: SignInProviders[] = [];
+export const enabledProviders: SignInProviders[] = [
+];
 
 function SignInWithButton(
   props: {
     provider?: SignInProviders;
     errorHandler?: (err: any) => void;
   } = {
-    provider: SignInProviders.apple,
-    errorHandler: (err: any) => {},
-  }
+      provider: SignInProviders.apple,
+      errorHandler: (err: any) => { },
+    }
 ) {
   const [signInIsRunning, setSignInIsRunning] = useState(false);
+  const navigate = useNavigate();
 
   const signInFun = async (): Promise<void> => {
     let provider: AuthProvider;
@@ -48,12 +51,22 @@ function SignInWithButton(
         throw new TypeError("Invalid Sign In Provider");
     }
     setSignInIsRunning(true);
+    let loggedIn = false;
     await signInWithPopup(FirebaseAuth, provider)
+      .then(async (user) => {
+        if (!user.user.emailVerified) {
+          await sendEmailVerification(user.user, {
+            url: `${window.location.origin}`,
+          });
+        }
+        loggedIn = true;
+      })
       .catch((err) => {
         if (typeof props.errorHandler === "function") props.errorHandler(err);
       })
       .finally(() => {
         setSignInIsRunning(false);
+        if (loggedIn) navigate("/");
       });
   };
 

@@ -4,7 +4,10 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import FirebaseAuth, { errorMessagesMap } from "../../services/FirebaseAuth";
 import { Alert, Snackbar, Typography } from "@mui/material";
 import { FirebaseError } from "firebase/app";
@@ -29,7 +32,7 @@ export default function SignIn() {
     process.env;
   const navigate = useNavigate();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     localStorage.removeItem("authorized");
@@ -44,7 +47,13 @@ export default function SignIn() {
       return;
     }
     setSignInIsRunning(true);
-    signInWithEmailAndPassword(FirebaseAuth, email, password)
+    await signInWithEmailAndPassword(FirebaseAuth, email, password)
+      .then((user) => {
+        if (user.user.emailVerified) return;
+        return sendEmailVerification(user.user, {
+          url: `${window.location.origin}`,
+        });
+      })
       .then(() => {
         setErrorMessage("");
         navigate("/");
@@ -57,6 +66,7 @@ export default function SignIn() {
             setErrorMessage("Invalid username or password");
             break;
           default:
+            console.log(err);
             if (errorMessagesMap[err.code]) {
               setErrorMessage(errorMessagesMap[err.code]);
             } else {
@@ -161,6 +171,7 @@ export default function SignIn() {
           </Grid>
         </Box>
       </Box>
+      <Box sx={{ marginBottom: "10vmin" }} />
       <Snackbar
         open={showMsg.isShown}
         autoHideDuration={6000}

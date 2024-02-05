@@ -35,37 +35,37 @@ const menuItems: {
   label: string;
   secure: boolean;
 }[] = [
-  {
-    key: "page_main",
-    path: "/",
-    component: ({ authUser }: { authUser: User | null | undefined }) => (
-      <MainRoute authUser={authUser} />
-    ),
-    label: "Main Page",
-    secure: false,
-  },
-  {
-    key: "page_second",
-    path: "/second",
-    component: ({
-      authUser,
-      user,
-      isLoadingUser,
-    }: {
-      authUser: User | null | undefined;
-      user: UserModel | undefined;
-      isLoadingUser: boolean;
-    }) => (
-      <SecondRoute
-        authUser={authUser}
-        user={user}
-        isLoadingUser={isLoadingUser}
-      />
-    ),
-    label: "Second Page",
-    secure: true,
-  },
-];
+    {
+      key: "page_main",
+      path: "/",
+      component: ({ authUser }: { authUser: User | null | undefined }) => (
+        <MainRoute authUser={authUser} />
+      ),
+      label: "Main Page",
+      secure: false,
+    },
+    {
+      key: "page_second",
+      path: "/second",
+      component: ({
+        authUser,
+        user,
+        isLoadingUser,
+      }: {
+        authUser: User | null | undefined;
+        user: UserModel | undefined;
+        isLoadingUser: boolean;
+      }) => (
+        <SecondRoute
+          authUser={authUser}
+          user={user}
+          isLoadingUser={isLoadingUser}
+        />
+      ),
+      label: "Second Page",
+      secure: true,
+    },
+  ];
 
 interface Props {
   window?: () => Window;

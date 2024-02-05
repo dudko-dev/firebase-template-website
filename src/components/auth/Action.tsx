@@ -1,4 +1,4 @@
-import { useState, FormEvent, useCallback, useEffect } from "react";
+import { useState, FormEvent, useEffect, useCallback } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Box from "@mui/material/Box";
@@ -33,7 +33,7 @@ export default function Action() {
   )
     ? (searchParams.get("mode") as (typeof modes)[number])
     : "resetEmail";
-  let oobCode = searchParams.get("oobCode");
+  const oobCode = searchParams.get("oobCode");
   const navigate = useNavigate();
 
   const handleResetPassword = (event: FormEvent<HTMLFormElement>) => {
@@ -120,7 +120,7 @@ export default function Action() {
       .then(async () => {
         setShowMsg({
           type: "info",
-          message: "The address has been confirmed, you need to log in again.",
+          message: "The address has been confirmed.",
           isShown: true,
         });
         if (FirebaseAuth.currentUser)
@@ -247,6 +247,7 @@ export default function Action() {
       >
         {inputBox()}
       </Box>
+      <Box sx={{ marginBottom: "10vmin" }} />
       <Snackbar
         open={showMsg.isShown}
         autoHideDuration={6000}

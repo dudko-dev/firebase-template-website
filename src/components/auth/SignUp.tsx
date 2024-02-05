@@ -9,7 +9,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import FirebaseAuth, { errorMessagesMap } from "../../services/FirebaseAuth";
-import { Alert, Snackbar, Typography } from "@mui/material";
+import { Alert, Checkbox, Snackbar, Typography } from "@mui/material";
 import { FirebaseError } from "firebase/app";
 import "./SignUp.css";
 import SignInWithButton, {
@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
   const [signUpIsRunning, setSignUpIsRunning] = useState(false);
+  const [acceptPolicies, setAcceptPolicies] = useState(false);
   const [showMsg, setShowMsg] = useState(
     {} as {
       type: "success" | "warning" | "info" | "error";
@@ -32,7 +33,7 @@ export default function SignUp() {
     process.env;
   const navigate = useNavigate();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     localStorage.removeItem("authorized");
@@ -56,7 +57,7 @@ export default function SignUp() {
       return;
     }
     setSignUpIsRunning(true);
-    createUserWithEmailAndPassword(FirebaseAuth, email, password)
+    await createUserWithEmailAndPassword(FirebaseAuth, email, password)
       .then((user) =>
         sendEmailVerification(user.user, {
           url: `${window.location.origin}`,
@@ -118,12 +119,29 @@ export default function SignUp() {
             id="repeat_password"
           />
           {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
+          <Typography sx={{ fontSize: "8pt" }}>
+            <Checkbox
+              onChange={(event) => {
+                setAcceptPolicies(!!event.target?.checked);
+              }}
+              value={acceptPolicies}
+            />
+            I confirm my agreement with{" "}
+            <a href="/privacy_policy" target="_blank" rel="noreferrer">
+              the privacy policy
+            </a>{" "}
+            and{" "}
+            <a href="/eula" target="_blank" rel="noreferrer">
+              the terms of services
+            </a>
+            .
+          </Typography>
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3 }}
-            disabled={signUpIsRunning}
+            disabled={signUpIsRunning || !acceptPolicies}
           >
             Sign Up
           </Button>
@@ -177,6 +195,7 @@ export default function SignUp() {
           </Grid>
         </Box>
       </Box>
+      <Box sx={{ marginBottom: "10vmin" }} />
       <Snackbar
         open={showMsg.isShown}
         autoHideDuration={6000}
