@@ -17,6 +17,8 @@ import SignInWithButton, {
   enabledProviders,
 } from "./SignInWithButton";
 import { useNavigate } from "react-router-dom";
+import FirebaseAnalytics from "../../services/FirebaseAnalytics";
+import { logEvent } from "firebase/analytics";
 
 export default function SignIn() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -77,6 +79,7 @@ export default function SignIn() {
       })
       .finally(() => {
         setSignInIsRunning(false);
+        logEvent(FirebaseAnalytics, "login", { auth_provider: "email" });
       });
   };
 

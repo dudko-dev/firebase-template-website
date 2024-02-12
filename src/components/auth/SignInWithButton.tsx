@@ -11,6 +11,8 @@ import FirebaseAuth from "../../services/FirebaseAuth";
 import "./SignInWithButton.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import FirebaseAnalytics from "../../services/FirebaseAnalytics";
+import { logEvent } from "firebase/analytics";
 
 export enum SignInProviders {
   apple = "apple",
@@ -18,16 +20,17 @@ export enum SignInProviders {
   github = "github",
 }
 
-export const enabledProviders: SignInProviders[] = [
-];
+export const enabledProviders: SignInProviders[] = [];
 
 function SignInWithButton(
   props: {
     provider?: SignInProviders;
     errorHandler?: (err: any) => void;
+    disableButton?: boolean;
   } = {
       provider: SignInProviders.apple,
       errorHandler: (err: any) => { },
+      disableButton: false,
     }
 ) {
   const [signInIsRunning, setSignInIsRunning] = useState(false);
@@ -57,6 +60,8 @@ function SignInWithButton(
         if (!user.user.emailVerified) {
           await sendEmailVerification(user.user, {
             url: `${window.location.origin}`,
+          }).then(() => {
+            logEvent(FirebaseAnalytics, "send_verification_email");
           });
         }
         loggedIn = true;
@@ -67,6 +72,9 @@ function SignInWithButton(
       .finally(() => {
         setSignInIsRunning(false);
         if (loggedIn) navigate("/");
+        logEvent(FirebaseAnalytics, "login", {
+          auth_provider: provider.providerId,
+        });
       });
   };
 
@@ -90,7 +98,7 @@ function SignInWithButton(
       sx={{ mt: 3, mb: 2 }}
       style={{ fontFamily: "FontAwersome" }}
       onClick={signInFun}
-      disabled={signInIsRunning}
+      disabled={signInIsRunning || props.disableButton}
     >
       {getSymbol()}
     </Button>

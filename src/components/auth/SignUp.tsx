@@ -17,6 +17,8 @@ import SignInWithButton, {
   enabledProviders,
 } from "./SignInWithButton";
 import { useNavigate } from "react-router-dom";
+import FirebaseAnalytics from "../../services/FirebaseAnalytics";
+import { logEvent } from "firebase/analytics";
 
 export default function SignUp() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -61,6 +63,8 @@ export default function SignUp() {
       .then((user) =>
         sendEmailVerification(user.user, {
           url: `${window.location.origin}`,
+        }).then(() => {
+          logEvent(FirebaseAnalytics, "send_verification_email");
         })
       )
       .then(() => {
@@ -76,6 +80,7 @@ export default function SignUp() {
       })
       .finally(() => {
         setSignUpIsRunning(false);
+        logEvent(FirebaseAnalytics, "sign_up");
       });
   };
 
@@ -165,6 +170,7 @@ export default function SignUp() {
                       });
                     }
                   }}
+                  disableButton={signUpIsRunning || !acceptPolicies}
                 ></SignInWithButton>
               </Grid>
             ))}

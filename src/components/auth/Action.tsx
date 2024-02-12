@@ -14,6 +14,8 @@ import { Alert, Snackbar } from "@mui/material";
 import { FirebaseError } from "firebase/app";
 import "./Action.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import FirebaseAnalytics from "../../services/FirebaseAnalytics";
+import { logEvent } from "firebase/analytics";
 
 const modes = ["resetEmail", "resetPassword", "verifyEmail"] as const;
 
@@ -62,6 +64,7 @@ export default function Action() {
       })
       .finally(() => {
         setActionIsRunning(false);
+        logEvent(FirebaseAnalytics, "reset_password");
       });
   };
 
@@ -102,6 +105,7 @@ export default function Action() {
       })
       .finally(() => {
         setActionIsRunning(false);
+        logEvent(FirebaseAnalytics, "reset_password_confirm");
       });
   };
 
@@ -147,6 +151,7 @@ export default function Action() {
       })
       .finally(() => {
         setActionIsRunning(false);
+        logEvent(FirebaseAnalytics, "verify_email");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, oobCode]);
