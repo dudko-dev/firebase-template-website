@@ -29,7 +29,7 @@ export const useCallableFn = <T, K>(
       setProgress(true);
       return appFn({ action: methodName, data })
         .then((res) => {
-          resp.result = res.data;
+          resp.result = res as K;
           resp.progress = false;
           resp.error = undefined;
           return Promise.resolve(resp.result);
